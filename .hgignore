@@ -1,0 +1,15 @@
+syntax: regexp
+
+^node_modules/
+^public/
+^bower_components/
+^build/
+^\.ngapp.json$
+
+syntax: glob
+
+server/config.js
+server/npm-debug.log
+*sublime-workspace
+*sublime-project
+*.bulk

@@ -1,0 +1,25 @@
+{
+  "name": "esobject",
+  "version": "1.0.0-beta.0",
+  "description": "ODM like library for elasticsearch",
+  "main": "lib/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://bitbucket.org/lsystems/esobject"
+  },
+  "keywords": [
+    "elasticsearch",
+    "odm"
+  ],
+  "author": "Quentin Raynaud <npm@qraynaud.eu>",
+  "license": "BSD",
+  "dependencies": {
+    "bluebird": "^2.3.2",
+    "elasticsearch": "^2.4.0",
+    "lodash": "^2.4.1",
+    "r42": "^0.8.0"
+  }
+}
