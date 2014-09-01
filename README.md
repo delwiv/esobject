@@ -1,6 +1,6 @@
 ## ES Object
 
-ES Object is a library allowing to manipulate Elasticsearch objects and to more easily implement right on them.
+ES Object is a library allowing to manipulate Elasticsearch objects and to more easily implement permissions on them.
 
 ### Installing
 
