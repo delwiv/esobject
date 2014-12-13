@@ -39,7 +39,7 @@ module.exports = esobject.create({
 });
 ```
 
-You can have more information on available configuration properties on [http:// See http://www.elasticsearch.org/guide/en/elasticsearch/client/javascript-api/current/configuration.html](http:// See http://www.elasticsearch.org/guide/en/elasticsearch/client/javascript-api/current/configuration.html)
+You can have more information on available configuration properties on [http://www.elasticsearch.org/guide/en/elasticsearch/client/javascript-api/current/configuration.html](http://www.elasticsearch.org/guide/en/elasticsearch/client/javascript-api/current/configuration.html)
 
 ### Object API
 
