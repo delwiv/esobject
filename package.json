@@ -25,8 +25,13 @@
   "license": "BSD",
   "dependencies": {
     "bluebird": "^2.3.2",
-    "elasticsearch": "^3.0.2",
-    "lodash": "^2.4.1",
+    "lodash": "^3.6.0",
     "r42": "^0.8.0"
+  },
+  "peerDependencies": {
+    "elasticsearch": "^4.0.2"
+  },
+  "devDependencies": {
+    "elasticsearch": "^4.0.2"
   }
 }

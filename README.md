@@ -41,6 +41,31 @@ module.exports = esobject.create({
 
 You can have more information on available configuration properties on [http://www.elasticsearch.org/guide/en/elasticsearch/client/javascript-api/current/configuration.html](http://www.elasticsearch.org/guide/en/elasticsearch/client/javascript-api/current/configuration.html)
 
+You can also provide an already configured client instead in esobject:
+
+```javascript
+var esobject = require('esobject');
+var es = require('elasticsearch');
+
+module.exports = esobject.create({
+  // Database
+  db: {
+    // Use custom client
+    client: new es.Client(/* params */),
+
+    // Plus the specific index & type reference
+    index: 'myAppIndex',
+    type: 'myTypeName'
+  }
+
+  // You can have an import strategy here (see later):
+  import: {},
+
+  // And also an export strategy:
+  export: {}
+});
+```
+
 ### Object API
 
 Now that we have a basic object type, we can interact with it!
