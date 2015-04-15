@@ -32,6 +32,11 @@
     "elasticsearch": "^4.0.2"
   },
   "devDependencies": {
-    "elasticsearch": "^4.0.2"
+    "chai": "^2.2.0",
+    "chai-as-promised": "^4.3.0",
+    "chai-properties": "^1.2.0",
+    "elasticsearch": "^4.0.2",
+    "mocha": "^2.2.4",
+    "uuid": "^2.0.1"
   }
 }

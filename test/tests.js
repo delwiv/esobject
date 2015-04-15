@@ -1,0 +1,295 @@
+var Promise = require('bluebird');
+
+var esobject = require('../');
+var chai = require('chai');
+var expect = chai.expect;
+chai.use(require('chai-properties'));
+chai.use(require('chai-as-promised'));
+
+var uuid = require('uuid');
+
+var Test = esobject.create({
+  db: {
+    host: 'localhost:9200',
+    /*log: [{
+      level: 'debug'
+    }],*/
+
+    index: 'esobject-tests',
+    type: 'test'
+  },
+
+  import: {
+    answer: 42,
+    answerBool: true,
+    tpl: '_<%= raw.field %>_',
+    ignored: undefined,
+    fnImport: function(prevVal, newVal) {
+      return ++newVal;
+    },
+    subObj: {
+      added: 42,
+    },
+  },
+
+  export: {
+    answer: 42,
+    answerBool: true,
+    tpl: '_<%= obj.field %>_',
+    ignored: undefined,
+    fnExport: function(prevVal) {
+      return ++prevVal;
+    },
+    subObj: {
+      added: 42,
+    },
+  },
+});
+
+describe('esobject', function() {
+  // Reset mapping
+  before(function(done) {
+    Test.client.indices.delete({index: 'esobject-tests', ignore: 404})
+      .nodeify(done)
+    ;
+  });
+
+  // Restore
+  after(function(done) {
+    Test.client.cluster.putSettings({
+      body: {transient: {'indices.ttl.interval': '60s'}}
+    }).nodeify(done);
+  });
+
+  // Empty all remaining objects before each tests
+  afterEach(function(done) {
+    Test.client.deleteByQuery({
+      index: 'esobject-tests',
+      body: {query: {match_all: {}}}
+    }).nodeify(done);
+  });
+
+  it('should index data using obj.save()', function(done) {
+    var id = uuid.v4();
+    var t = new Test(id);
+    var res = t.save()
+      .then(function() {
+        return Test.client.get(Test.dbConfig({id: id}));
+      })
+    ;
+
+    expect(res)
+      .to.eventually.have.properties({_id: id})
+      .and.to.have.property('_source').that.is.an('Object')
+      .notify(done)
+    ;
+  });
+
+  it('should retrieve data using ESObject.get()', function(done) {
+    var id = uuid.v4();
+    expect(
+      Test.client.index(Test.dbConfig({id: id, body: {}}))
+        .then(function() {
+          return Test.get(id);
+        })
+    )
+      .to.eventually.be.an.instanceOf(Test)
+      .and.to.have.property('_id', id)
+      .notify(done)
+    ;
+  });
+
+  it('should not accept to create to object with the same id', function(done) {
+    var id = uuid.v4();
+
+    expect(
+      (new Test(id)).save()
+        .then(function() {
+          return (new Test(id)).save();
+        })
+    )
+      .to.be.rejectedWith(Error, 'DocumentAlreadyExistsException')
+      .notify(done)
+    ;
+  });
+
+  it('should not accept to update an object with an outdated version', function(done) {
+    expect(
+      (new Test()).save()
+        .call('save')
+        .then(function(res) {
+          res._version = 1;
+          return res.save();
+        })
+    )
+      .to.eventually.be.rejectedWith(Error, 'VersionConflictEngineException')
+      .notify(done)
+    ;
+  });
+
+  it('should not accept to update an object with a superior version', function(done) {
+    expect(
+      (new Test()).save()
+        .then(function(res) {
+          res._version = 2;
+          return res.save();
+        })
+    )
+      .to.eventually.be.rejectedWith(Error, 'VersionConflictEngineException')
+      .notify(done)
+    ;
+  });
+
+  it('should support ttls', function(done) {
+    var id = uuid.v4();
+    var t = new Test(id);
+    t._ttl = 10;
+
+    var follow = expect(
+      t.save()
+        .then(function() {
+          return Test.get(id);
+        })
+    )
+      .to.eventually.be.have.property('_ttl')
+        .and.that.is.lt(10)
+        .that.is.not.undefined
+    ;
+
+    expect(
+      follow
+        .then(function() {
+          return Promise.delay(10);
+        })
+        .then(function() {
+          return Test.get(id);
+        })
+    )
+      .to.eventually.have.property('_ttl', undefined)
+      .notify(done)
+    ;
+  });
+
+  describe('export()', function() {
+    it('should not import attributes set to undefined', function(done) {
+      var t = new Test();
+
+      expect(
+        t.export()
+      )
+        .to.eventually.not.have.property('ignored')
+        .notify(done)
+      ;
+    });
+
+    it('should allow primitive exports', function(done) {
+      expect(
+        (new Test()).export()
+      )
+        .to.eventually.have.properties({answer: 42, answerBool: true})
+        .notify(done)
+      ;
+    });
+
+    it('should allow template exports', function(done) {
+      var t = new Test();
+      t.field = uuid.v4();
+
+      expect(
+        t.export()
+      )
+        .to.eventually.have.property('tpl', '_' + t.field + '_')
+        .notify(done)
+      ;
+    });
+
+    it('should allow function exports', function(done) {
+      var t = new Test();
+      t.fnExport = 41;
+
+      expect(
+        t.export()
+      )
+        .to.eventually.have.property('fnExport', 42)
+        .notify(done)
+      ;
+    });
+
+    it('should allow sub exports', function(done) {
+      var t = new Test();
+      t.subObj = {value: 21};
+
+      expect(
+        t.export()
+      )
+        .to.eventually.have.properties({
+          subObj: {
+            added: 42,
+            value: 21,
+          },
+        })
+        .notify(done)
+      ;
+    });
+  });
+
+  describe('import()', function() {
+    it('should not import attributes set to undefined', function(done) {
+      var t = new Test();
+
+      expect(
+        t.import({ignored: 42})
+      )
+        .to.eventually.not.have.property('ignored')
+        .notify(done)
+      ;
+    });
+
+    it('should allow primitive imports', function(done) {
+      expect(
+        (new Test()).import({})
+      )
+        .to.eventually.have.properties({answer: 42, answerBool: true})
+        .notify(done)
+      ;
+    });
+
+    it('should allow template imports', function(done) {
+      var t = new Test();
+      var id = uuid.v4();
+
+      expect(
+        t.import({field: id})
+      )
+        .to.eventually.have.property('tpl', '_' + id + '_')
+        .notify(done)
+      ;
+    });
+
+    it('should allow function imports', function(done) {
+      var t = new Test();
+
+      expect(
+        t.import({fnImport: 41})
+      )
+        .to.eventually.have.property('fnImport', 42)
+        .notify(done)
+      ;
+    });
+
+    it('should allow sub imports', function(done) {
+      var t = new Test();
+
+      expect(
+        t.import({})
+      )
+        .to.eventually.have.properties({
+          subObj: {
+            added: 42
+          },
+        })
+        .notify(done)
+      ;
+    });
+  });
+});

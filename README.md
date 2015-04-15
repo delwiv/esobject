@@ -307,7 +307,7 @@ The export strategy works almost the same way than the import strategy.
 
 Here are the main differences:
 * it exports everything by default (except internal fields like `_id` & `_version`), the `ignore value` strategy becoming very useful to prevent exporting some data
-* in export templates, there is no `obj` & `raw` values, the context is the current object's instance, so you can access its property directly (eg: `displayName: '<%= firstname %> <%= lastname %>`)
+* in export templates, there is no `raw` variable
 * in export functions, the `newVal` & `raw` arguments are `null`
 * in `$check`, there is only one argument that is the exported object (even if `$check` does not seem very usefull here, it can be used to do some cleanup & modifications before final value is returned)
 
