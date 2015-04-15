@@ -410,4 +410,39 @@ var User = esobject.create({
     exportedAt: Date.now
   }
 });
+
+function updateMiddleWare(req, res) {
+  User.get('userId')
+    .call('import', req.rawDataFromAPI)
+    .call('export')
+    .then(res.json)
+  ;
+}
+```
+
+### Named import/export strategies
+
+You can create additional import/export strategies using the `imports` and `exports` configuration parameters:
+
+```javascript
+var ESObject = require('esobject');
+
+var User = ESObject.create({
+  imports: {
+    myImport1: { /* strategy goes here */},
+    myImport2: { /* strategy goes here */}
+  },
+  exports: {
+    myExport1: { /* strategy goes here */},
+    myExport2: { /* strategy goes here */}
+  }
+});
+
+var user = new User();
+
+// Those are valid calls
+user.myImport1(/* ... */);
+user.myImport2(/* ... */);
+user.myExport1(/* ... */);
+user.myExport2(/* ... */);
 ```

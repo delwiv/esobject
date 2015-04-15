@@ -31,6 +31,12 @@ var Test = ESObject.create({
     },
   },
 
+  imports: {
+    myImport: {
+      answer: 'not42',
+    },
+  },
+
   export: {
     answer: 42,
     answerBool: true,
@@ -41,6 +47,12 @@ var Test = ESObject.create({
     },
     subObj: {
       added: 42,
+    },
+  },
+
+  exports: {
+    myExport: {
+      answer: 'not42',
     },
   },
 });
@@ -297,6 +309,17 @@ describe('esobject', function() {
         .notify(done)
       ;
     });
+
+    it('should support custom exports', function(done) {
+      var t = new Test();
+
+      expect(
+        t.myExport()
+      )
+        .to.eventually.have.property('answer', 'not42')
+        .notify(done)
+      ;
+    });
   });
 
   describe('import()', function() {
@@ -354,6 +377,17 @@ describe('esobject', function() {
             added: 42
           },
         })
+        .notify(done)
+      ;
+    });
+
+    it('should support custom imports', function(done) {
+      var t = new Test();
+
+      expect(
+        t.myImport()
+      )
+        .to.eventually.have.property('answer', 'not42')
         .notify(done)
       ;
     });
