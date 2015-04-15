@@ -1,14 +1,13 @@
 var Promise = require('bluebird');
-
-var esobject = require('../');
 var chai = require('chai');
+var uuid = require('uuid');
+
+var ESObject = require('../');
 var expect = chai.expect;
 chai.use(require('chai-properties'));
 chai.use(require('chai-as-promised'));
 
-var uuid = require('uuid');
-
-var Test = esobject.create({
+var Test = ESObject.create({
   db: {
     host: 'localhost:9200',
     /*log: [{
@@ -65,8 +64,17 @@ describe('esobject', function() {
   afterEach(function(done) {
     Test.client.deleteByQuery({
       index: 'esobject-tests',
+      ignore: [404],
       body: {query: {match_all: {}}}
     }).nodeify(done);
+  });
+
+  it('should not be possible to create ESObjects directly', function() {
+    function test() {
+      return new ESObject('id');
+    }
+
+    expect(test).to.throw(Error, 'You should not create ESOBjects directly');
   });
 
   it('should index data using obj.save()', function(done) {
@@ -166,6 +174,64 @@ describe('esobject', function() {
         })
     )
       .to.eventually.have.property('_ttl', undefined)
+      .notify(done)
+    ;
+  });
+
+  it('should allow searches', function(done) {
+    var t = new Test(uuid.v4());
+    t.data = 'value';
+
+    expect(
+      t.save({refresh: true})
+        .then(function() {
+          return Test.search({query: {match_all: {}}});
+        })
+    )
+      .to.eventually.have.properties({
+        total: 1,
+        elements: [{_id: t._id, _version: 1, data: 'value'}]
+      })
+      .notify(done)
+    ;
+  });
+
+  it('should allow to export search results', function(done) {
+    var t = new Test(uuid.v4());
+
+    expect(
+      t.save({refresh: true})
+        .then(function() {
+          return Test.search({query: {match_all: {}}});
+        })
+        .get('elements')
+        .call('export')
+    )
+      .to.eventually.have.properties({'0': {answer: 42, answerBool: true}})
+      .notify(done)
+    ;
+  });
+
+  it('should allow deletes', function(done) {
+    var id = uuid.v4();
+
+    expect(
+      Test.client.index(Test.dbConfig({
+        id: id,
+        body: {}
+      }))
+        .then(function() {
+          return Test.get(id);
+        })
+        .catch(function(err) {
+          throw new Error('Too soon to fail!');
+        })
+        .call('delete')
+        .then(function() {
+          return Test.get(id);
+        })
+    )
+      .to.eventually.be.rejectedWith(Error, 'Not Found')
       .notify(done)
     ;
   });
