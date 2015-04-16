@@ -18,6 +18,8 @@ var Test = ESObject.create({
     type: 'test'
   },
 
+  mapping: __dirname + '/mappings/test',
+
   import: {
     answer: 42,
     answerBool: true,
@@ -58,27 +60,11 @@ var Test = ESObject.create({
 });
 
 describe('esobject', function() {
-  // Reset mapping
-  before(function(done) {
-    Test.client.indices.delete({index: 'esobject-tests', ignore: 404})
+  // Empty index
+  beforeEach(function(done) {
+    Test.client.indices.deleteMapping(Test.dbConfig({ignore: 404}))
       .nodeify(done)
     ;
-  });
-
-  // Restore
-  after(function(done) {
-    Test.client.cluster.putSettings({
-      body: {transient: {'indices.ttl.interval': '60s'}}
-    }).nodeify(done);
-  });
-
-  // Empty all remaining objects before each tests
-  afterEach(function(done) {
-    Test.client.deleteByQuery({
-      index: 'esobject-tests',
-      ignore: [404],
-      body: {query: {match_all: {}}}
-    }).nodeify(done);
   });
 
   it('should not be possible to create ESObjects directly', function() {
@@ -244,6 +230,16 @@ describe('esobject', function() {
         })
     )
       .to.eventually.be.rejectedWith(Error, 'Not Found')
+      .notify(done)
+    ;
+  });
+
+  it('should support mapping update', function(done) {
+    expect(Test.createOrUpdateMapping().catch(function(err) {
+      console.log('tests.js:239', err.stack);
+      throw err;
+    }))
+      .to.eventually.be.fulfilled
       .notify(done)
     ;
   });

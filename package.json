@@ -1,6 +1,6 @@
 {
   "name": "esobject",
-  "version": "1.0.0-beta.11",
+  "version": "1.0.0-beta.12",
   "description": "ODM like library for elasticsearch",
   "main": "lib/index.js",
   "scripts": {
@@ -25,6 +25,7 @@
   "license": "BSD",
   "dependencies": {
     "bluebird": "^2.3.2",
+    "glob": "^5.0.5",
     "lodash": "^3.6.0",
     "r42": "^0.8.0"
   },
@@ -36,6 +37,7 @@
     "chai-as-promised": "^4.3.0",
     "chai-properties": "^1.2.0",
     "elasticsearch": "^4.0.2",
+    "js-yaml": "^3.2.7",
     "mocha": "^2.2.4",
     "uuid": "^2.0.1"
   }
