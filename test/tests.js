@@ -235,11 +235,17 @@ describe('esobject', function() {
   });
 
   it('should support mapping update', function(done) {
-    expect(Test.createOrUpdateMapping().catch(function(err) {
-      console.log('tests.js:239', err.stack);
-      throw err;
-    }))
+    expect(Test.createOrUpdateMapping())
       .to.eventually.be.fulfilled
+      .and.to.have.property('test')
+      .notify(done)
+    ;
+  });
+
+  it('should be possible to load simple files using loadMapping', function(done) {
+    expect(ESObject.loadMapping('test', __dirname + '/mappings/test/main.yaml'))
+      .to.eventually.be.fulfilled
+      .and.to.have.property('test')
       .notify(done)
     ;
   });
