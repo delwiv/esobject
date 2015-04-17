@@ -1,0 +1,3 @@
+filter:
+  term:
+    <%= data.filter_on %>: <%= data.filter_with %>

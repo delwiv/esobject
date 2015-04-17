@@ -57,6 +57,15 @@ var Test = ESObject.create({
       answer: 'not42',
     },
   },
+
+  queries: {
+    instance: {
+      sameField: __dirname + '/queries/same_field.yaml',
+    },
+    static: {
+      term: __dirname + '/queries/term.yaml',
+    },
+  },
 });
 
 describe('esobject', function() {
@@ -206,6 +215,37 @@ describe('esobject', function() {
         .call('export')
     )
       .to.eventually.have.properties({'0': {answer: 42, answerBool: true}})
+      .notify(done)
+    ;
+  });
+
+  it('should allow to execute static queries', function(done) {
+    var t = new Test(uuid.v4());
+
+    expect(
+      t.save({refresh: true})
+        .then(function() {
+          return Test.term({filter_on: '_id', filter_with: t._id});
+        })
+    )
+      .to.eventually.have.deep.property('elements[0]._id', t._id)
+      .notify(done)
+    ;
+  });
+
+  it('should allow to execute instance queries', function(done) {
+    var t = new Test(uuid.v4());
+    t.field = 'value42';
+
+    expect(
+      t.save({refresh: true})
+        .then(function() {
+          var t2 = new Test(uuid.v4());
+          t2.field = 'value42';
+          return t2.sameField({field: 'field'});
+        })
+    )
+      .to.eventually.have.deep.property('elements[0]._id', t._id)
       .notify(done)
     ;
   });

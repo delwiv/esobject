@@ -1,0 +1,3 @@
+filter:
+  term:
+    <%= data.field %>: <%= data.obj[data.field] %>
