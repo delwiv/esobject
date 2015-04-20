@@ -275,9 +275,9 @@ describe('esobject', function() {
   });
 
   it('should support mapping update', function(done) {
-    expect(Test.createOrUpdateMapping())
+    expect(Test.createOrUpdateMapping({attrType: 'string'}))
       .to.eventually.be.fulfilled
-      .and.to.have.property('test')
+      .and.to.have.deep.property('test.properties.attr.type', 'string')
       .notify(done)
     ;
   });
