@@ -1,6 +1,7 @@
 var Promise = require('bluebird');
 var chai = require('chai');
 var uuid = require('uuid');
+var _ = require('lodash');
 
 var ESObject = require('../');
 var expect = chai.expect;
@@ -21,15 +22,29 @@ var Test = ESObject.create({
   mapping: __dirname + '/mappings/test',
 
   import: {
+    $check: _.noop,
+
     answer: 42,
     answerBool: true,
     tpl: '_<%= raw.field %>_',
     ignored: undefined,
     fnImport: function(prevVal, newVal) {
-      return ++newVal;
+      return ++newVal || undefined;
     },
     subObj: {
       added: 42,
+    },
+    subArray: {
+      $all: {
+        test: 42,
+        copiedNoOld: {$id: true},
+        copiedWithOld: {$id: 'keepold'},
+      },
+    },
+    subCollection: {
+      $all: {
+        test: 21,
+      },
     },
   },
 
@@ -48,7 +63,7 @@ var Test = ESObject.create({
       return ++prevVal;
     },
     subObj: {
-      added: 42,
+      added: 42
     },
   },
 
@@ -419,6 +434,82 @@ describe('esobject', function() {
             added: 42
           },
         })
+        .notify(done)
+      ;
+    });
+
+    it('should allow to apply a stategy to all sub elements of an array using $all', function(done) {
+      var t = new Test();
+
+      expect(
+        t.import({subArray: [{}]})
+      )
+        .to.eventually.have.property('subArray')
+          .that.is.an('Array')
+          .that.has.deep.property('[0].test', 42)
+        .notify(done)
+      ;
+    });
+
+    it('should allow to apply a stategy to all sub elements of an object using $all', function(done) {
+      var t = new Test();
+
+      expect(
+        t.import({subCollection: {sub: {}}})
+      )
+        .to.eventually.have.property('subCollection')
+          .that.is.an('Object')
+          .that.has.deep.property('sub.test', 21)
+        .notify(done)
+      ;
+    });
+
+    it('should allow to copy an attribute without old with $id: true', function(done) {
+      var t = new Test();
+      var id = uuid.v4();
+
+      expect(
+        t.import({subArray: [{copiedNoOld: id}]})
+      )
+        .to.eventually.have.deep.property('subArray[0].copiedNoOld', id)
+        .notify(done)
+      ;
+    });
+
+    it('should not restore old with $id: true', function(done) {
+      var t = new Test();
+      t.subArray = [{copiedNoOld: 42}];
+      var id = uuid.v4();
+
+      expect(
+        t.import({subArray: [{}]})
+      )
+        .to.eventually.not.have.deep.property('subArray[0].copiedNoOld')
+        .notify(done)
+      ;
+    });
+
+    it('should allow to copy an attribute without old with $id: keepold', function(done) {
+      var t = new Test();
+      var id = uuid.v4();
+
+      expect(
+        t.import({subArray: [{copiedWithOld: id}]})
+      )
+        .to.eventually.have.deep.property('subArray[0].copiedWithOld', id)
+        .notify(done)
+      ;
+    });
+
+    it('should not restore old with $id: keepold', function(done) {
+      var t = new Test();
+      t.subArray = [{copiedWithOld: 42}];
+      var id = uuid.v4();
+
+      expect(
+        t.import({subArray: [{}]})
+      )
+        .to.eventually.have.deep.property('subArray[0].copiedWithOld', 42)
         .notify(done)
       ;
     });
