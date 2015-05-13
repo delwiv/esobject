@@ -55,6 +55,7 @@ var Test = ESObject.create({
   },
 
   export: {
+    _id: {$id: true},
     answer: 42,
     answerBool: true,
     tpl: '_<%= esobj.field %>_',
@@ -363,6 +364,18 @@ describe('esobject', function() {
             value: 21,
           },
         })
+        .notify(done)
+      ;
+    });
+
+    it('should support $id: true in exports', function(done) {
+      var id = uuid.v4();
+      var t = new Test(id);
+
+      expect(
+        t.export()
+      )
+        .to.eventually.have.property('_id', id)
         .notify(done)
       ;
     });
