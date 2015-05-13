@@ -57,7 +57,7 @@ var Test = ESObject.create({
   export: {
     answer: 42,
     answerBool: true,
-    tpl: '_<%= obj.field %>_',
+    tpl: '_<%= esobj.field %>_',
     ignored: undefined,
     fnExport: function(prevVal) {
       return ++prevVal;

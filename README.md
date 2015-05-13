@@ -29,7 +29,7 @@ module.exports = esobject.create({
     // Plus the specific index & type reference
     index: 'myAppIndex',
     type: 'myTypeName'
-  }
+  },
 
   // You can have an import strategy here (see later):
   import: {},
@@ -222,8 +222,9 @@ var User = esobject.create({
 ```
 
 In templates, during import, the following two objects are available:
-* obj: values in the instance before import
-* raw: raw values provided in the import
+* `esobj`: values in the instance before import
+* `obj` (deprecated): alias for `esobj`
+* `raw`: raw values provided in the import
 
 #### Function
 
@@ -239,10 +240,10 @@ var User = esobject.create({
   // ...
 
   import: {
-    nbHouses: function(oldVal, newVal, obj, raw) {
+    nbHouses: function(oldVal, newVal, esobj, raw) {
       // oldVal contains the old value of nbHouses
       // rawVal contains the raw value of nbHouses
-      // obj contains the old values (before import)
+      // esobj contains the old values (before import)
       // raw contains the raw values
 
       // This will return the number of houses owned by the user
@@ -393,8 +394,8 @@ var User = esobject.create({
 
   export: {
     // Expose internal id & version
-    id: '<%= _id %>';
-    version: '<%= _version %>',
+    id: '<%= esobj._id %>';
+    version: '<%= esobj._version %>',
 
     // Prevent password & email & sso.data from being exposed
     password: undefined,
@@ -404,7 +405,7 @@ var User = esobject.create({
     }
 
     // Export fake displayName for convenience
-    displayName: '<%= firstname %> <%= lastname %>',
+    displayName: '<%= esobj.firstname %> <%= esobj.lastname %>',
 
     // Export date
     exportedAt: Date.now

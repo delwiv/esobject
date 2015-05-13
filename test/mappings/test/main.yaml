@@ -1,4 +1,4 @@
 dynamic: strict
 properties:
   attr:
-    type: <%= data.attrType %>
+    type: <%= attrType %>
