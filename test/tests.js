@@ -46,6 +46,17 @@ var Test = ESObject.create({
         test: 21,
       },
     },
+    defaults: {
+      someDefault: {$default: Date.now},
+      defaultWithId: {
+        $id: true,
+        $default: Date.now
+      },
+      defaultWithIdKeepOld: {
+        $id: 'keepold',
+        $default: Date.now
+      },
+    },
   },
 
   imports: {
@@ -64,7 +75,7 @@ var Test = ESObject.create({
       return ++prevVal;
     },
     subObj: {
-      added: 42
+      added: 42,
     },
   },
 
@@ -523,6 +534,98 @@ describe('esobject', function() {
         t.import({subArray: [{}]})
       )
         .to.eventually.have.deep.property('subArray[0].copiedWithOld', 42)
+        .notify(done)
+      ;
+    });
+
+    it('should add default value using $default when attribute is undefined', function(done) {
+      var t = new Test();
+
+      expect(
+        t.import({})
+      )
+        .to.eventually.have.deep.property('defaults.someDefault')
+          .that.is.a('Number')
+        .notify(done)
+      ;
+    });
+
+    it('should not add default value using $default when attribute is already set', function(done) {
+      var t = new Test();
+
+      var id = uuid.v4();
+      t.defaults = {someDefault: id};
+
+      expect(
+        t.import({})
+      )
+        .to.eventually.have.deep.property('defaults.someDefault', id)
+        .notify(done)
+      ;
+    });
+
+    it('should not add default value using $default & $id true when attribute is provided', function(done) {
+      var t = new Test();
+
+      var id = uuid.v4();
+
+      expect(
+        t.import({defaults: {defaultWithId: id}})
+      )
+        .to.eventually.have.deep.property('defaults.defaultWithId', id)
+        .notify(done)
+      ;
+    });
+
+    it('should add default value using $default & $id true when attribute is not provided', function(done) {
+      var t = new Test();
+
+      expect(
+        t.import({})
+      )
+        .to.eventually.have.deep.property('defaults.defaultWithId')
+          .that.is.a('Number')
+        .notify(done)
+      ;
+    });
+
+    it('should add default value using $default & $id keepold when attribute is not ' +
+      'provided and not already set', function(done) {
+      var t = new Test();
+
+      expect(
+        t.import({})
+      )
+        .to.eventually.have.deep.property('defaults.defaultWithIdKeepOld')
+          .that.is.a('Number')
+        .notify(done)
+      ;
+    });
+
+    it('should not add default value using $default & $id keepold when attribute is provided', function(done) {
+      var t = new Test();
+
+      t.defaults = {defaultWithIdKeepOld: uuid.v4()};
+
+      var id = uuid.v4();
+      expect(
+        t.import({defaults: {defaultWithIdKeepOld: id}})
+      )
+        .to.eventually.have.deep.property('defaults.defaultWithIdKeepOld', id)
+        .notify(done)
+      ;
+    });
+
+    it('should not add default value using $default & $id keepold when attribute is already set', function(done) {
+      var t = new Test();
+
+      var id = uuid.v4();
+      t.defaults = {defaultWithIdKeepOld: id};
+
+      expect(
+        t.import({})
+      )
+        .to.eventually.have.deep.property('defaults.defaultWithIdKeepOld', id)
         .notify(done)
       ;
     });
