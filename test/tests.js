@@ -57,6 +57,10 @@ var Test = ESObject.create({
         $default: Date.now
       },
     },
+    copies: {
+      rawVal: {$rawAttr: 'rawVal'},
+      subRawVal: {$rawAttr: 'sub.rawVal'},
+    },
   },
 
   imports: {
@@ -67,6 +71,7 @@ var Test = ESObject.create({
 
   export: {
     _id: {$id: true},
+    idCopy: {$objAttr: '_id'},
     answer: 42,
     answerBool: true,
     tpl: '_<%= esobj.field %>_',
@@ -391,6 +396,18 @@ describe('esobject', function() {
       ;
     });
 
+    it('should support $objAttr', function(done) {
+      var id = uuid.v4();
+      var t = new Test(id);
+
+      expect(
+        t.export()
+      )
+        .to.eventually.have.property('idCopy', id)
+        .notify(done)
+      ;
+    });
+
     it('should support custom exports', function(done) {
       var t = new Test();
 
@@ -626,6 +643,32 @@ describe('esobject', function() {
         t.import({})
       )
         .to.eventually.have.deep.property('defaults.defaultWithIdKeepOld', id)
+        .notify(done)
+      ;
+    });
+
+    it('should support $rawAttr', function(done) {
+      var t = new Test();
+
+      var id = uuid.v4();
+
+      expect(
+        t.import({rawVal: id})
+      )
+        .to.eventually.have.deep.property('copies.rawVal', id)
+        .notify(done)
+      ;
+    });
+
+    it('should support $rawAttr with sub attributes', function(done) {
+      var t = new Test();
+
+      var id = uuid.v4();
+
+      expect(
+        t.import({sub: {rawVal: id}})
+      )
+        .to.eventually.have.deep.property('copies.subRawVal', id)
         .notify(done)
       ;
     });
