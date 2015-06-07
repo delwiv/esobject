@@ -103,10 +103,10 @@ You can easily use the extended search API provided by elasticsearch:
 ```javascript
 var User = require('./user');
 
-// A promise on an object containing:
+// A promise on an array containing the found elements and with the following
+// extra attributes:
 //  - total: the total number of elements found
 //    (this can be more than the number of returned elements)
-//  - elements: an array of user instances (max query.count elements)
 //  - aggregations: the aggregations returned by ES with this search
 var foundUsers = User.search({
   // A valid query in Elasticsearch like:

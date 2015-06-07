@@ -229,7 +229,8 @@ describe('esobject', function() {
     )
       .to.eventually.have.properties({
         total: 1,
-        elements: [{_id: t._id, _version: 1, data: 'value'}]
+        0: {_id: t._id, _version: 1, data: 'value'},
+        length: 1,
       })
       .notify(done)
     ;
@@ -243,7 +244,6 @@ describe('esobject', function() {
         .then(function() {
           return Test.search({query: {match_all: {}}});
         })
-        .get('elements')
         .call('export')
     )
       .to.eventually.have.properties({'0': {answer: 42, answerBool: true}})
@@ -260,7 +260,7 @@ describe('esobject', function() {
           return Test.term({filter_on: '_id', filter_with: t._id});
         })
     )
-      .to.eventually.have.deep.property('elements[0]._id', t._id)
+      .to.eventually.have.deep.property('[0]._id', t._id)
       .notify(done)
     ;
   });
@@ -277,7 +277,7 @@ describe('esobject', function() {
           return t2.sameField({field: 'field'});
         })
     )
-      .to.eventually.have.deep.property('elements[0]._id', t._id)
+      .to.eventually.have.deep.property('[0]._id', t._id)
       .notify(done)
     ;
   });
