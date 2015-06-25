@@ -1,11 +1,19 @@
 {
   "name": "esobject",
-  "version": "1.0.0-beta.27",
+  "version": "1.0.0-beta.28",
   "description": "ODM like library for elasticsearch",
-  "main": "lib/index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "author": {
+    "name": "Quentin Raynaud",
+    "url": "https://bitbucket.org/qraynaud"
   },
+  "license": " BSD-3-Clause",
+  "keywords": [
+    "elasticsearch",
+    "elastic",
+    "odm",
+    "object",
+    "client"
+  ],
   "homepage": "https://bitbucket.org/lsystems/esobject",
   "repository": {
     "type": "hg",
@@ -14,15 +22,10 @@
   "bugs": {
     "url": "https://bitbucket.org/lsystems/esobject/issues?status=new&status=open"
   },
-  "keywords": [
-    "elasticsearch",
-    "elastic",
-    "odm",
-    "object",
-    "client"
-  ],
-  "author": "Quentin Raynaud <npm@qraynaud.eu>",
-  "license": "BSD",
+  "main": "lib/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
   "dependencies": {
     "bluebird": "^2.3.2",
     "glob": "^5.0.5",
@@ -30,13 +33,13 @@
     "r42": "^0.8.0"
   },
   "peerDependencies": {
-    "elasticsearch": "^4.0.2"
+    "elasticsearch": "^4.0.2 || ^5"
   },
   "devDependencies": {
-    "chai": "^2.2.0",
-    "chai-as-promised": "^5.0.0",
+    "chai": "^3.0.0",
+    "chai-as-promised": "^5.1.0",
     "chai-properties": "^1.2.0",
-    "elasticsearch": "^4.0.2",
+    "elasticsearch": "^4.0.2 || ^5",
     "js-yaml": "^3.2.7",
     "mocha": "^2.2.4",
     "uuid": "^2.0.1"
