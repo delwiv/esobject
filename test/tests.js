@@ -200,7 +200,6 @@ describe('esobject', function() {
     )
       .to.eventually.be.have.property('_ttl')
         .and.that.is.lt(10)
-        .that.is.not.undefined
     ;
 
     expect(
@@ -212,7 +211,8 @@ describe('esobject', function() {
           return Test.get(id);
         })
     )
-      .to.eventually.have.property('_ttl', undefined)
+      .to.eventually.have.property('_ttl')
+        .and.that.is.lt(0)
       .notify(done)
     ;
   });
