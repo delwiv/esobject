@@ -16,7 +16,7 @@ var Test = ESObject.create({
     }],*/
 
     index: 'esobject-tests',
-    type: 'test'
+    type: 'test',
   },
 
   mapping: __dirname + '/mappings/test',
@@ -103,7 +103,7 @@ var Test = ESObject.create({
 describe('esobject', function() {
   // Empty index
   beforeEach(function(done) {
-    Test.client.indices.deleteMapping(Test.dbConfig({ignore: 404}))
+    Test.client.indices.delete(Test.dbConfig({ignore: 404}))
       .nodeify(done)
     ;
   });
@@ -307,10 +307,13 @@ describe('esobject', function() {
   });
 
   it('should support mapping update', function(done) {
-    expect(Test.createOrUpdateMapping({attrType: 'string'}))
-      .to.eventually.be.fulfilled
-      .and.to.have.deep.property('test.properties.attr.type', 'string')
-      .notify(done)
+    expect(
+      Test.client.indices.create(Test.dbConfig({}))
+        .then(Test.createOrUpdateMapping.bind(Test, {attrType: 'string'}, null, null))
+    )
+        .to.eventually.be.fulfilled
+        .and.to.have.deep.property('test.properties.attr.type', 'string')
+        .notify(done)
     ;
   });
 
