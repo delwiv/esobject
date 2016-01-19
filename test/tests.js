@@ -17,6 +17,7 @@ var Test = ESObject.create({
 
     index: 'esobject-tests',
     type: 'test',
+    defer: Promise.defer,
   },
 
   mapping: __dirname + '/mappings/test',
@@ -162,7 +163,7 @@ describe('esobject', function() {
 
   it('should not accept to update an object with an outdated version', function(done) {
     expect(
-      (new Test()).save()
+      new Test().save()
         .call('save')
         .then(function(res) {
           res._version = 1;
@@ -176,7 +177,7 @@ describe('esobject', function() {
 
   it('should not accept to update an object with a superior version', function(done) {
     expect(
-      (new Test()).save()
+      new Test().save()
         .then(function(res) {
           res._version = 2;
           return res.save();
@@ -312,7 +313,7 @@ describe('esobject', function() {
         .then(Test.createOrUpdateMapping.bind(Test, {attrType: 'string'}, null, null))
     )
         .to.eventually.be.fulfilled
-        .and.to.have.deep.property('test.properties.attr.type', 'string')
+        .and.to.have.property('acknowledged', true)
         .notify(done)
     ;
   });
