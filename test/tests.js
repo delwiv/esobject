@@ -156,7 +156,7 @@ describe('esobject', function() {
           return (new Test(id)).save();
         })
     )
-      .to.be.rejectedWith(Error, 'DocumentAlreadyExistsException')
+      .to.be.rejectedWith(Error, 'document_already_exists_exception')
       .notify(done)
     ;
   });
@@ -170,7 +170,7 @@ describe('esobject', function() {
           return res.save();
         })
     )
-      .to.eventually.be.rejectedWith(Error, 'VersionConflictEngineException')
+      .to.eventually.be.rejectedWith(Error, 'version_conflict_engine_exception')
       .notify(done)
     ;
   });
@@ -183,37 +183,7 @@ describe('esobject', function() {
           return res.save();
         })
     )
-      .to.eventually.be.rejectedWith(Error, 'VersionConflictEngineException')
-      .notify(done)
-    ;
-  });
-
-  it('should support ttls', function(done) {
-    var id = uuid.v4();
-    var t = new Test(id);
-    t._ttl = 10;
-
-    var follow = expect(
-      t.save()
-        .then(function() {
-          return Test.get(id);
-        })
-    )
-      .to.eventually.be.have.property('_ttl')
-        .and.that.is.lt(10)
-    ;
-
-    expect(
-      follow
-        .then(function() {
-          return Promise.delay(10);
-        })
-        .then(function() {
-          return Test.get(id);
-        })
-    )
-      .to.eventually.have.property('_ttl')
-        .and.that.is.lt(0)
+      .to.eventually.be.rejectedWith(Error, 'version_conflict_engine_exception')
       .notify(done)
     ;
   });
@@ -311,10 +281,44 @@ describe('esobject', function() {
     expect(
       Test.client.indices.create(Test.dbConfig({}))
         .then(Test.createOrUpdateMapping.bind(Test, {attrType: 'string'}, null, null))
+        .catch(function(err) {
+          console.log('tests.js:315', err.stack);
+          throw err;
+        })
     )
         .to.eventually.be.fulfilled
         .and.to.have.property('acknowledged', true)
         .notify(done)
+    ;
+  });
+
+  it('should support ttls', function(done) {
+    var id = uuid.v4();
+    var t = new Test(id);
+    t._ttl = '100ms';
+
+    var follow = expect(
+      Test.client.indices.create(Test.dbConfig({}))
+        .then(Test.createOrUpdateMapping.bind(Test, {attrType: 'string'}, null, null))
+        .then(function() {
+          return t.save();
+        })
+        .then(function() {
+          return Test.get(id);
+        })
+    )
+      .to.eventually.be.have.property('_ttl')
+        .and.that.is.lt(100)
+    ;
+
+    expect(
+      follow
+        .then(function() {
+          return Promise.delay(100);
+        })
+    )
+      .to.eventually.be.rejectedWith(Error, 'already_expired_exception')
+      .notify(done)
     ;
   });
 

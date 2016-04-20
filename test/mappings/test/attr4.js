@@ -2,5 +2,5 @@
 
 module.exports = {
   type: 'string',
-  stored: false
+  index: 'no'
 };
