@@ -1,6 +1,0 @@
-dynamic: strict
-_ttl:
-  enabled: true
-properties:
-  attr:
-    type: <%= attrType %>

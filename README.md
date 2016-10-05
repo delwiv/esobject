@@ -1,5 +1,8 @@
 # ESObject
-Bring your Elasticsearch documents to life! 
+
+**This documentation is out of date, it is only applicable to versions up to 1.0.0-beta.33**
+
+Bring your Elasticsearch documents to life!
 
 ESObject is an Object Document Mapper (ODM) library to interface your Elasticsearch documents with the real world. Tranformation, validation, protection and many more features made possible through highly customizable strategies.
 
@@ -15,7 +18,7 @@ npm install --save esobject
 ## Documentation conventions
 Most of the ESObject methods (or generated methods) return a thenable promise. Throughout this documentation we may act as if it is a common and well-known fact.
 
-Naming convention : 
+Naming convention :
 
 - Methods on the ESObject global object will be referenced as `ESObject#method`
 - Methods on the model (result of `ESObject#create`) will be referenced as `Model#method`
@@ -27,8 +30,8 @@ Naming convention :
 var ESObject = require('esobject');
 
 // --- Create your model
-var Animal = ESObject.create({ 
-    db: { host: 'localhost:9200', index: 'myZoo', type: 'animal' } 
+var Animal = ESObject.create({
+    db: { host: 'localhost:9200', index: 'myZoo', type: 'animal' }
 });
 
 // --- Get an existing instance
@@ -139,7 +142,7 @@ Mapping can be defined as :
 /*  ---- Mapping example - as an object ---- */
 var ESObject = require('esobject');
 
-var Animal = ESObject.create({ 
+var Animal = ESObject.create({
     db: { host: 'localhost:9200', index: 'myZoo', type: 'animal' },
     mapping: {
         dynamic: 'strict',
@@ -163,7 +166,7 @@ Animal.createOrUpdateMapping()
 /*  ---- Mapping example - as a function ---- */
 var ESObject = require('esobject');
 
-var Animal = ESObject.create({ 
+var Animal = ESObject.create({
     db: { host: 'localhost:9200', index: 'myZoo', type: 'animal' },
     mapping: function(params) {
         return {
@@ -175,7 +178,7 @@ var Animal = ESObject.create({
           properties: {
             species: { type: 'string' },
             name: { type: 'string' },
-            
+
         }
     },
 });
@@ -190,7 +193,7 @@ Animal.createOrUpdateMapping({ttl_default: '1d'})
 
 ```javascript
 /*  ---- Mapping example - as a YAML file ---- */
-var Animal = ESObject.create({ 
+var Animal = ESObject.create({
     db: { host: 'localhost:9200', index: 'myZoo', type: 'animal' },
     mapping: _dirname + '/animal_mapping.yaml',
 });
@@ -211,15 +214,15 @@ dynamic: strict
 ttl:
   enabled: true
   default: <%= ttl_default %>
-properties: 
+properties:
   species:
     type: string
-  name: 
+  name:
     type: string
 ```
 ```javascript
 /*  ---- Mapping example - as a YAML file with lodash templates ---- */
-var Animal = ESObject.create({ 
+var Animal = ESObject.create({
     db: { host: 'localhost:9200', index: 'myZoo', type: 'animal' },
     mapping: _dirname + '/animal_mapping.yaml',
 });
@@ -238,20 +241,20 @@ Animal.createOrUpdateMapping({ttl_default: '1d'})
 #### 1.3 Creating a model - Queries
 Named `queries` can be defined on your model. They can be used at the model level (`static`), or on a particular `instance`.
 
-Queries can be defined as : 
+Queries can be defined as :
 
 - a javascript object
 - a javascript, JSON, or YAML file (js-yaml package will need to be installed separately)
 - a function returning the query
 
-Anything you define will be passed as the body parameter of the elasticsearch.js client.search method (more information [here](https://www.elastic.co/guide/en/elasticsearch/client/javascript-api/current/api-reference.html#api-search)). 
+Anything you define will be passed as the body parameter of the elasticsearch.js client.search method (more information [here](https://www.elastic.co/guide/en/elasticsearch/client/javascript-api/current/api-reference.html#api-search)).
 
 On an `instance` query, you can access the current instance through the `esobj` parameter. (See the examples below).
 
 - **static** queries can be called with **Model#nameOfYourQuery**
-- **instance** queries can be called with **instance.nameOfYourQuery**. 
+- **instance** queries can be called with **instance.nameOfYourQuery**.
 
-They will both return a promise resolving an array containing the matching documents. This array will also have 2 properties : 
+They will both return a promise resolving an array containing the matching documents. This array will also have 2 properties :
 
 - `total` : grand total of documents matching your search
 - `aggregations` : if this applies
@@ -260,7 +263,7 @@ They will both return a promise resolving an array containing the matching docum
 /*  ---- Queries examples ---- */
 var ESObject = require('esobject');
 
-var Animal = ESObject.create({ 
+var Animal = ESObject.create({
     db: { host: 'localhost:9200', index: 'myZoo', type: 'animal' },
     queries: {
         // --- Static queries, available on the model
@@ -322,12 +325,12 @@ The `export` strategy let you decide how data from your documents will be expose
 
 Both import and export methods will return a promise resolving the modified instance.
 
-Strategies are objects that will link fields of the document to different behaviours. A behaviour can be described as : 
+Strategies are objects that will link fields of the document to different behaviours. A behaviour can be described as :
 
 - a value
 - a function
 - a lodash template
-- a sub-strategy 
+- a sub-strategy
 - helper objects with reserved parameters ($id, $default, $all, ...)
 
 ----
@@ -360,7 +363,7 @@ var myAnimal = new Animal();
 myAnimal.name = 'Joseph';
 myAnimal.import({ species: 'Tiger', name: 'Freddie', surname: 'Mercury' })
     .then(function(myAnimal){
-        // --- At this point : 
+        // --- At this point :
         // --- myAnimal.name === 'Joseph'
         // --- myAnimal.surname === 'Doe'
     })
@@ -368,7 +371,7 @@ myAnimal.import({ species: 'Tiger', name: 'Freddie', surname: 'Mercury' })
 
 myAnimal.export()
     .then(function(myAnimal){
-        // --- At this point : 
+        // --- At this point :
         // --- myAnimal.name is undefined
         // --- myAnimal.surname === 'Smith'
     })
@@ -380,7 +383,7 @@ myAnimal.export()
 #### 1.4.2 Strategy behaviour - as a function
 Used to describe complex behaviour. The function should return the value for the field being described.
 
-For an `import` behaviour, this function will expose 4 parameters : 
+For an `import` behaviour, this function will expose 4 parameters :
 
 - The value already present before the strategy is applied (`esval`)
 - The value of the equivalent field in the raw data being imported (`rawval`)
@@ -410,21 +413,21 @@ myAnimal.name = 'Mike';
 
 myAnimal.import({name: 'André', species: 'Chameleon'})
   .then(function(myAnimal) {
-    // --- At this point : 
+    // --- At this point :
     // --- myAnimal.name == 'Mike';
   })
 ;
 
 myAnimal.import({name: 'Madonna', species: 'Chameleon'})
   .then(function(myAnimal) {
-    // --- At this point : 
+    // --- At this point :
     // --- myAnimal.name == 'Madonna';
   })
 ;
 
 ```
 
-For an `export` behaviour, the function will expose 2 parameters : 
+For an `export` behaviour, the function will expose 2 parameters :
 
 - The value already present before the strategy is applied (val)
 - The instance before export (esobj)
@@ -453,7 +456,7 @@ thisAnimal.timid = true;
 
 myAnimal.export()
   .then(function(myAnimal) {
-    // --- At this point : 
+    // --- At this point :
     // --- myAnimal.name == undefined;
   })
 ;
@@ -510,7 +513,7 @@ var Animal = ESObject.create({
 var myAnimal = new Animal();
 myAnimal.import({name: 'Ned', title: 'King', species: 'Mouse'})
   .then(function(myAnimal) {
-    // --- At this point : 
+    // --- At this point :
     // --- myAnimal.title == 'Mouse King';
   })
 ;
@@ -521,7 +524,7 @@ thisAnimal.species = 'Seagull';
 
 thisAnimal.export()
   .then(function(thisAnimal) {
-    // --- At this point : 
+    // --- At this point :
     // --- myAnimal.displayName == 'Paul the Seagull';
   })
 ;
@@ -534,7 +537,7 @@ thisAnimal.export()
 
 If your document field is a complex one, the associated behaviour can be a full strategy.
 
-```javascript 
+```javascript
 /* Strategy - sub-strategy - example */
 var ESObject = require('esobject');
 
@@ -555,7 +558,7 @@ var myAnimal = new Animal();
 
 myAnimal.import({name: 'Tokawasi', surname: 'Toto', species: 'Bull', informations: { size: '176' }, birthdate: '01/01/1995' })
   .then(function(myAnimal){
-     // --- At this point : 
+     // --- At this point :
      // --- myAnimal.name == 'Tokawasi';
      // --- myAnimal.dislpayName == 'Tokawasi (Toto)';
      // --- myAnimal.informations == { age: 20, size: '176 centimeters' };
@@ -568,7 +571,7 @@ myAnimal.import({name: 'Tokawasi', surname: 'Toto', species: 'Bull', information
 
 #### 1.4.5 Strategy behaviour - helper objects
 
-On an `import` field behaviour : 
+On an `import` field behaviour :
 
 - `{$id: true}` will import a new value if it is given, will set the field to undefined if not.
 - `{$id: 'keepold'}` will import a new value if it is given, will keep the old value if not.
@@ -576,15 +579,15 @@ On an `import` field behaviour :
 - `{$rawAttr: 'x.y.z'}` will associate this field with the rawData.x.y.z value. Useful when your imported data doesn't have the same structure as your target instance.
 - `{$all : substrategy}` will apply the defined substrategy to all array elements or object properties contained in the field.
 
-On an `export` field behaviour : 
+On an `export` field behaviour :
 
 - `{$id: true}` will export the field as-is
 - `{$objAttr: 'x.y.z'}` will associate this field with the esobj.x.y.z value. Useful when your exported data doesn't have the same structure as your source instance.
 - `{$all : substrategy}` will apply the defined substrategy to all array elements or object properties contained in the field.
 
-See the examples below : 
+See the examples below :
 
-```javascript 
+```javascript
 /* Strategy - helper object - $id/$default/$rawAttr example */
 var ESObject = require('esobject');
 
@@ -607,7 +610,7 @@ myAnimal.surname = 'Fefe';
 
 myAnimal.import({species: 'Lizard', informations: {age: 154}})
   .then(function(myAnimal) {
-    // --- At this point : 
+    // --- At this point :
     // --- myAnimal.species == 'Lizard';
     // --- myAnimal.subspecies == undefined;
     // --- myAnimal.name == 'Felipe';
@@ -618,7 +621,7 @@ myAnimal.import({species: 'Lizard', informations: {age: 154}})
 
 ```
 
-```javascript 
+```javascript
 /* Strategy - helper object - $objAttr example */
 var ESObject = require('esobject');
 
@@ -637,23 +640,23 @@ myAnimal.informations = { age: 32, size: 12 };
 
 myAnimal.export()
   .then(function(myAnimal) {
-    // --- At this point : 
+    // --- At this point :
     // --- myAnimal.species = 'Spider'
     // --- myAnimal.age == 32;
   })
 ;
 ```
 
-```javascript 
+```javascript
 /* Strategy - helper object - $all example */
 var ESObject = require('esobject');
 
 var Animal = ESObject.create({
   db: db,
   import: {
-    nephews: { 
-      $all: { 
-        name: {$id: true}, 
+    nephews: {
+      $all: {
+        name: {$id: true},
         age: {$id, true}
       }
     },
@@ -670,7 +673,7 @@ myAnimal.import({
     {name: 'Dewey'},
   ],
 }).then(function(myAnimal) {
-    // --- At this point : 
+    // --- At this point :
     // --- myAnimal.nephews == [{name: 'Louie', age: 14}, {name: 'Huey', age: 14}, {name: 'Dewey', age: undefined}];
   })
 ;
@@ -681,14 +684,14 @@ myAnimal.import({
 
 #### 1.4.6 Strategy - `$check` function
 
-A strategy can also contain a validation function called `$check`. This function gets 2 parameters : 
+A strategy can also contain a validation function called `$check`. This function gets 2 parameters :
 
 - the instance before the strategy is applied (`esobj`)
 - the modified instance after all behaviours have been applied (`resobj`)
 
 Through this function you can verify that the modified instance is exactly what it should be. It is called after all other strategy behaviours have been applied. If this function throws an error, the whole strategy will as well.
 
-```javascript 
+```javascript
 /* Strategies - $check example */
 var ESObject = require('esobject');
 
@@ -710,7 +713,7 @@ var myAnimal = new Animal();
 myAnimal.import({/* some data */})
   .catch(function(err) { /* Do something clever */ })
   .then(function(myAnimal) { /* Do something clever */ })
-; 
+;
 
 ```
 
@@ -720,17 +723,17 @@ myAnimal.import({/* some data */})
 
 When creating a model, you're not bound to just one import and one export strategies. You can define as much strategies as you need with the `imports` and `exports` parameters. You can call them with `instance.nameOfMyStrategy()`.
 
-```javascript 
+```javascript
 /* Named strategies - example */
 var ESObject = require('esobject');
 
 var Animal = ESObject.create({
   db: db,
-  
+
   // - Regular import/export
   import: {/* Define your strategy here */},
   export: {/* Define your strategy here */},
-  
+
   // - Named strategies
   imports: {
     myImport: {/* Define your strategy here */},
@@ -766,7 +769,7 @@ Search queries can be executed with `Model#search(query)`. Query definition and 
 /*  ---- Search query example ---- */
 var ESObject = require('esobject');
 
-var Animal = ESObject.create({ 
+var Animal = ESObject.create({
     db: { host: 'localhost:9200', index: 'myZoo', type: 'animal' },
 });
 
@@ -775,7 +778,7 @@ Animal.search({ query: { term: { name: 'Etienne' } } })
     console.log(result);
   })
 ;
- 
+
 ```
 
 ----
@@ -787,7 +790,7 @@ Given its elasticsearch id, you can retrieve an instance with `Method#get(id, [p
 /*  ---- Model#get example ---- */
 var ESObject = require('esobject');
 
-var Animal = ESObject.create({ 
+var Animal = ESObject.create({
     db: { host: 'localhost:9200', index: 'myZoo', type: 'animal' },
 });
 
@@ -803,7 +806,7 @@ Animal.get(another_id, {refresh: true, fields: ['name', 'surname']})
     // -- Do something with it
   })
 ;
- 
+
 ```
 
 ### 2.3 Model methods - createOrUpdateMapping
@@ -821,7 +824,7 @@ You can create an instance by using the `new` operator on an existing model. Opt
 /*  ---- Creating an instance - example ---- */
 var ESObject = require('esobject');
 
-var Animal = ESObject.create({ 
+var Animal = ESObject.create({
     db: { host: 'localhost:9200', index: 'myZoo', type: 'animal' },
 });
 
@@ -835,7 +838,7 @@ var thisAnimal = new Animal(1, 0);
 ----
 
 ### 3.2 Instance fields
-On a given instance the following fields are available (they are not enumerable and will not be exported by default) : 
+On a given instance the following fields are available (they are not enumerable and will not be exported by default) :
 
 - `_id` : id of the document this instance is referring to
 - `_version` : version of the document
@@ -851,7 +854,7 @@ Save an instance into elasticsearch. It will return a promise resolving the save
 /*  ---- Saving an instance - example ---- */
 var ESObject = require('esobject');
 
-var Animal = ESObject.create({ 
+var Animal = ESObject.create({
     db: { host: 'localhost:9200', index: 'myZoo', type: 'animal' },
 });
 
@@ -859,23 +862,23 @@ var Animal = ESObject.create({
 var myAnimal = new Animal();
 
 myAnimal.import({name: 'Jean', surname: 'Coco', type: 'Rabbit'})
-  .then(function(myAnimal) { 
+  .then(function(myAnimal) {
     myAnimal.save()
       .then(function(savedAnimal) {
         /* This animal is now saved into elasticsearch */
       });
   })
-; 
+;
 
 // -- Example with elasticsearch.js client#index params
 myAnimal.import({name: 'Jeanne', surname: 'PiliPili', type: 'Rabbit'})
-  .then(function(myAnimal) { 
+  .then(function(myAnimal) {
     myAnimal.save({versionType: 'internal'})
       .then(function(savedAnimal) {
         /* This animal is now saved into elasticsearch */
       });
   })
-; 
+;
 // -- You can also use bluebird shortcuts
 myAnimal
   .import({name: 'Jean', surname: 'Coco', type: 'Rabbit'})
@@ -895,7 +898,7 @@ Delete the document referenced by this instance. Return a promise.
 /*  ---- Delete - example ---- */
 var ESObject = require('esobject');
 
-var Animal = ESObject.create({ 
+var Animal = ESObject.create({
     db: { host: 'localhost:9200', index: 'myZoo', type: 'animal' },
 });
 

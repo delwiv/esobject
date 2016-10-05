@@ -1,0 +1,14 @@
+type: object
+
+$check: !require
+  file: biblio.js
+  prop: checkTest
+
+properties:
+  test:
+    type: string
+
+    $import:
+      default: !require
+        file: biblio.js
+        prop: inlineSub.test

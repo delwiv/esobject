@@ -1,6 +1,6 @@
 {
   "name": "esobject",
-  "version": "1.0.0-beta.33",
+  "version": "1.0.0-beta.34",
   "description": "ODM like library for elasticsearch",
   "author": {
     "name": "Quentin Raynaud",
@@ -22,26 +22,31 @@
   "bugs": {
     "url": "https://bitbucket.org/lsystems/esobject/issues?status=new&status=open"
   },
-  "main": "lib/index.js",
+  "main": "build/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "babel --preset=es2015-node4 --plugins=transform-es2015-modules-commonjs lib --out-dir build",
+    "prepublish": "npm run build && npm test",
+    "test": "babel-node --preset=es2015-node4 --plugins=transform-es2015-modules-commonjs test/test.js"
   },
   "dependencies": {
-    "bluebird": "^3.3.5",
-    "glob": "^7.0.3",
-    "lodash": "^4.11.1",
-    "r42": "^0.8.5"
+    "bluebird": "^3.4.6",
+    "lodash": "^4.16.2"
   },
   "peerDependencies": {
-    "elasticsearch": ">=4.0.2"
+    "elasticsearch": ">=11.0.1"
   },
   "devDependencies": {
+    "babel-preset-es2015-node4": "^2.1.0",
     "chai": "^3.5.0",
-    "chai-as-promised": "^5.3.0",
+    "chai-as-promised": "^6.0.0",
     "chai-properties": "^1.2.1",
-    "elasticsearch": ">=4.0.2",
-    "js-yaml": "^3.6.0",
-    "mocha": "^2.4.5",
-    "uuid": "^2.0.2"
+    "elasticsearch": ">=11.0.1",
+    "eslint": "^3.7.0",
+    "js-yaml": "^3.6.1",
+    "mocha": "^3.0.2",
+    "uuid": "^2.0.3"
+  },
+  "engines": {
+    "node": ">=4.0.0"
   }
 }

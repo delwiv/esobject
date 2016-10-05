@@ -2,3 +2,5 @@
 .hgignore
 .hgtags
 test/*
+lib/*
+tmp/*

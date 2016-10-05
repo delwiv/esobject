@@ -1,0 +1,55 @@
+dynamic: strict
+
+$check: !require
+  file: biblio.js
+  prop: checkTest
+
+properties:
+  id:
+    $export:
+      default: !export
+        name: copy
+        args:
+        - _id
+
+  name:
+    type: string
+    $array: false
+    $import:
+      default: !import
+        name: default
+        args:
+        - !require
+          file: biblio.js
+          prop: addTotal
+        - <no name>
+      super: !import
+        name: default
+        args:
+        - <super no name>
+
+  simple:
+    type: boolean
+
+    $import:
+      default: !require
+        file: biblio.js
+        prop: simple
+
+  user:
+    type: string
+
+    $import:
+      default: !require
+        file: biblio.js
+        prop: user
+
+    $export:
+      default: !export
+        name: drop
+
+  inlineSub: !require
+    file: inline_sub.yaml
+
+  sub: !require
+    file: sub.js

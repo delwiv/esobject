@@ -1,4 +1,0 @@
-type: object
-properties:
-  attr1:
-    type: string
