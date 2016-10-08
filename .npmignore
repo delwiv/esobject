@@ -4,3 +4,6 @@
 test/*
 lib/*
 tmp/*
+*.tmp
+*.bck
+*.tgz

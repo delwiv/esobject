@@ -7,3 +7,4 @@ npm-debug.log
 *sublime-workspace
 *sublime-project
 *.bulk
+*.tgz

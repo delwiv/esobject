@@ -19,12 +19,6 @@ npm install --save esobject
 
 Most of the ESObject methods (or generated methods) return a thenable promise. Throughout this documentation we may act as if it is a common and well-known fact.
 
-Naming convention :
-
-- Methods on the ESObject global object will be referenced as `esobject#method`
-- Methods on the model (result of `esobject#create`) will be referenced as `Model#method`
-- Methods on a particular instance (representing an elasticsearch document) will be referenced as `instance.method`
-
 ## Very basic usage
 
 (Let's say we are working with a zoo full of cute little animals.)
@@ -50,8 +44,8 @@ index.get(Animal, 'id')
 
 // --- Create a new instance
 var myAnimal = new Animal(index, {
-  myAnimal.species: 'Rockhopper Penguin',
-  myAnimal.name: 'Etienne',
+  species: 'Rockhopper Penguin',
+  name: 'Etienne',
 });
 
 // --- and save it
@@ -72,31 +66,46 @@ index.save(myAnimal)
 
 ## Topics
 
-**!!!! Out of date TOC !!!!**
+<!-- toc -->
 
-- 1 [Creating a model](#markdown-header-1-creating-a-model)
-    - 1.1 [Creating a model - Elasticsearch connection](#markdown-header-11-creating-a-model-elasticsearch-connection)
-    - 1.2 [Creating a model - Mapping](#markdown-header-12-creating-a-model-mapping)
-    - 1.3 [Creating a model - Queries](#markdown-header-13-creating-a-model-queries)
-    - 1.4 [Creating a model - Import and Export Strategies](#markdown-header-14-creating-a-model-import-and-export-strategies)
-        - 1.4.1 [Strategy behaviour - as a value](#markdown-header-141-strategy-behaviour-as-a-value)
-        - 1.4.2 [Strategy behaviour - as a function](#markdown-header-142-strategy-behaviour-as-a-function)
-        - 1.4.3 [Strategy behaviour - as a lodash template](#markdown-header-143-strategy-behaviour-as-a-lodash-template)
-        - 1.4.4 [Strategy behaviour - sub-strategy](#markdown-header-144-strategy-behaviour-sub-strategy)
-        - 1.4.5 [Strategy behaviour - helper objects](#markdown-header-145-strategy-behaviour-helper-objects)
-        - 1.4.6 [Strategy - $check function](#markdown-header-146-strategy-check-function)
-    - 1.5 [Creating a model - Named Strategies](#markdown-header-15-creating-a-model-named-strategies)
+- [1 Creating a model](#1-creating-a-model)
+  * [1.1 Creating a model - Mapping](#11-creating-a-model---mapping)
+  * [1.2 Creating a model - Queries](#12-creating-a-model---queries)
+  * [1.3 Creating a model - Import and Export](#13-creating-a-model---import-and-export)
+    + [1.3.1 Import behaviours](#131-import-behaviours)
+    + [1.3.2 Export behaviours](#132-export-behaviours)
+    + [1.3.3 Additional arguments](#133-additional-arguments)
+    + [1.3.4 Named import & export behaviours](#134-named-import--export-behaviours)
+    + [1.3.5 Import & export strategies helpers](#135-import--export-strategies-helpers)
+    + [1.3.6 Array support](#136-array-support)
+    + [1.3.7 `$check` function during import](#137-check-function-during-import)
+- [2 Store](#2-store)
+  * [2.1 Creating a store](#21-creating-a-store)
+  * [2.2 Store methods - add](#22-store-methods---add)
+  * [2.3 Store methods - remove](#23-store-methods---remove)
+  * [2.4 Store methods - getType](#24-store-methods---gettype)
+  * [2.5 Store methods - getTypes](#25-store-methods---gettypes)
+- [3 Index](#3-index)
+  * [3.1 Creating an index](#31-creating-an-index)
+  * [3.2 Index methods - search](#32-index-methods---search)
+  * [3.3 Index methods - get](#33-index-methods---get)
+  * [3.4 Index methods - save](#34-index-methods---save)
+  * [3.5 Index methods - delete](#35-index-methods---delete)
+  * [3.6 Index methods - createOrUpdate](#36-index-methods---createorupdate)
+- [4 MultiIndex](#4-multiindex)
+  * [4.1 Creating a MultiIndex](#41-creating-a-multiindex)
+  * [4.2 MultiIndex methods - add](#42-multiindex-methods---add)
+  * [4.3 MultiIndex methods - remove](#43-multiindex-methods---remove)
+  * [4.4 MultiIndex methods - getType](#44-multiindex-methods---gettype)
+  * [4.5 MultiIndex methods - getTypes](#45-multiindex-methods---gettypes)
+  * [4.6 MultiIndex methods - search](#46-multiindex-methods---search)
+- [5 Instances](#5-instances)
+  * [5.1 Creating an instance](#51-creating-an-instance)
+  * [5.2 Instance fields](#52-instance-fields)
+  * [5.3 Instance methods - save](#53-instance-methods---save)
+  * [5.4 Instance methods - delete](#54-instance-methods---delete)
 
-- 2 [Model methods](#markdown-header-2-model-methods)
-    - 2.1 [Model methods - search](#markdown-header-21-model-methods-search)
-    - 2.2 [Model methods - get](#markdown-header-22-model-methods-get)
-    - 2.3 [Model methods - createOrUpdateMapping](#markdown-header-23-model-methods-createorupdatemapping)
-
-- 3 [Instances](#markdown-header-3-instances)
-    - 3.1 [Creating an instance](#markdown-header-31-creating-an-instance)
-    - 3.2 [Instance fields](#markdown-header-32-instance-fields)
-    - 3.3 [Instance methods - save](#markdown-header-33-instance-methods-save)
-    - 3.4 [Instance methods - delete](#markdown-header-34-instance-methods-delete)
+<!-- tocstop -->
 
 ----
 
@@ -106,7 +115,7 @@ Creating a model is done through the `esobject#create(options)` method. Possible
 
 ----
 
-#### 1.1 Creating a model - Mapping
+### 1.1 Creating a model - Mapping
 
 When creating a new model you may define its Elasticsearch `mapping` (more information about Elasticsearch mapping [here](https://www.elastic.co/guide/en/elasticsearch/reference/current/mapping.html)). This mapping can then be applied with the `Index#createOrUpdate` method.
 
@@ -201,7 +210,7 @@ properties:
 ----
 
 
-#### 1.2 Creating a model - Queries
+### 1.2 Creating a model - Queries
 
 Named `queries` can be defined on your model. They can be used at the model level (`statics`), or on a particular instance (`methods`).
 
@@ -258,7 +267,7 @@ thisAnimal.searchHomonyms({index: someIndex})
 ----
 
 
-#### 1.3 Creating a model - Import and Export
+### 1.3 Creating a model - Import and Export
 
 When creating a new model, you can define `import` and `export` strategies to interface your documents.
 
@@ -282,7 +291,7 @@ If a function returns a promise, the resolved value will be used for the operati
 
 ----
 
-##### 1.3.1 Import behaviours
+#### 1.3.1 Import behaviours
 
 For `import` behaviours, you will also be able to inject :
 
@@ -334,7 +343,7 @@ myAnimal.import({name: 'Madonna', species: 'Chameleon'})
 
 ----
 
-##### 1.3.2 Export behaviours
+#### 1.3.2 Export behaviours
 
 For an `export` behaviour, the function will allow you to inject:
 
@@ -389,7 +398,7 @@ myAnimal.export()
 
 ----
 
-##### 1.3.3 Additional arguments
+#### 1.3.3 Additional arguments
 
 For both `import` and `export` behaviours, you can easily manipulate additional arguments:
 
@@ -578,7 +587,7 @@ myAnimal.export()
 
 ----
 
-##### 1.3.6 Array support
+#### 1.3.6 Array support
 
 Elasticsearch supports array of values in any property given that the values respect the type of the base property. `esobject` is aware of such a fact and applies `import` and `export` behaviours on all elements of the array if there is one.
 
@@ -705,9 +714,112 @@ index.get(Animal, 'some_animal')
 
 ----
 
-## 2 Index
+## 2 Store
 
-### 2.1 Creating an index
+A store is a collection of types that works together. They are useful to describe the minimum types required to achieve a functionality for example.
+
+### 2.1 Creating a store
+
+It is very easy to create a store. Just use the `new` operator on its constructor exposed by the `ESObject` library. The constructor has the following signature: `Store(storesOrTypes...)`.
+
+```javascript
+/* Strategies - creating a store */
+var esobject = require('esobject');
+
+var Type1 = esobject.create({name: 'Type1'});
+var Type2 = esobject.create({name: 'Type2'});
+var Type3 = esobject.create({name: 'Type3'});
+
+// Creates an empty store
+var store = new esobject.Store();
+// Creates a store with a single type in it
+store = new esobject.Store(Type1);
+// Creates a store with multiple types in it (you can pass more of them)
+store = new esobject.Store(Type2);
+
+// Creates a store with a store in it and types (you can pass more stores too)
+var store2 = new esobject.Store(store, Type3);
+```
+
+----
+
+### 2.2 Store methods - add
+
+A store is composed of one or more types that it will manipulate. `add()` allows you to add stores or types in it. You can pass any number of them to the `add` method.
+
+```javascript
+// All tose are valid add calls
+store.add(Type1);
+store.add(Type2, Type3);
+store.add(store1);
+store.add(store2, store3);
+store.add(store4, Type4, store5);
+```
+
+----
+
+### 2.3 Store methods - remove
+
+A store is composed of one or more types that it will manipulate. `remove()` allows you to remove types or stores from itself. You can pass any number of them to the `remove` method.
+
+```javascript
+// All tose are valid add calls
+store.remove(Type1);
+store.remove(Type2, Type3);
+store.remove(store1);
+store.remove(store2, store3);
+store.remove(store4, Type4, store5);
+```
+
+----
+
+### 2.4 Store methods - getType
+
+The `store.getType(typeName)` method takes a string argument and returns the type having this name in this store (or one of its substores). It throws if no type of the provided name was found.
+
+```javascript
+// Get the Type1 type from store
+var Type1 = store.getType('Type1');
+// Throws
+store.getType('ThisTypeIsNotInThisStore');
+```
+
+----
+
+### 2.5 Store methods - getTypes
+
+The `store.getTypes()` method returns an object mapping type names to actual types for every type in it and its substores.
+
+```javascript
+var Type1 = store.getTypes().Type1;
+```
+
+----
+
+## 3 Index
+
+Index are stores and this contain every methods of stores. Thus an index can be provided wherever a store is required. Indexes though are linked to a specific elasticsearch client (and thus to a specific cluster) and an index in it.
+
+Be careful though: it is not a very bright idea to pass an index to the `store.add` method since it would negate its use since stores are not aware of elasticsearch clients. If you want to do that, you probably should create an intermediary store.
+
+```javascript
+var functionStore = new esobject.Store(/* functionStore types */);
+
+// -- bad way of doing this
+var index = new esobject.Index(/* args */);
+index.add(/* index types */)
+
+functionStore.add(index); // this is valid but is probably a mistake
+
+// -- looking correct
+var indexTypesStore = new esobject.Store(/* index types */);
+functionStore.add(indexTypesStore);
+
+var index = new esobject.Index(/* args */);
+index.add(indexTypesStore);
+```
+
+### 3.1 Creating an index
 
 An index is created using the `new` operator on the `esobject.Index(client, indexName[, Types...]` contructor.
 
@@ -715,27 +827,11 @@ It takes first the elasticsearch client that the index should use to perform its
 
 You can then pass any number of arguments. They will all be forwarded to the `index.add()` method.
 
-### 2.2 Index methods - add
+----
 
-An index is composed of one or more types that it will manipulate. `add()` allows you to add types in an index. You can pass any number of them to the `add` method.
+### 3.2 Index methods - search
 
-```javascript
-index.add(Type1);
-index.add(Type2, Type3);
-```
-
-### 2.3 Index methods - remove
-
-An index is composed of one or more types that it will manipulate. `remove()` allows you to remove types in an index. You can pass any number of them to the `remove` method.
-
-```javascript
-index.remove(Type1);
-index.remove(Type2, Type3);
-```
-
-### 2.2 Index methods - search
-
-Search queries can be executed with `index.search(Types..., query[, params])`. Query definition and returned values are the same as named queries. See the [Creating a model - Queries](#markdown-header-13-creating-a-model-queries) section for more information.
+Search queries can be executed with `index.search(Types..., query[, params])`. Query definition and returned values are the same as named queries. See the [Creating a model - Queries](#13-creating-a-model-queries) section for more information.
 
 You can optionnally add an object containing any parameters accepted by the elsaticsearch.js `client#search` method. (See [here](https://www.elastic.co/guide/en/elasticsearch/client/javascript-api/current/api-reference.html#api-search) for more information about those).
 
@@ -767,7 +863,7 @@ Search returns an `Array` of results. It is extended with the following properti
 
 ----
 
-### 2.3 Index methods - get
+### 3.3 Index methods - get
 
 Given its elasticsearch id, you can retrieve an instance with `index.get(Type, id[, params])`.
 
@@ -797,7 +893,7 @@ Animal.get(Animal, 'id', {parent: 'parent_id'})
 
 ----
 
-### 2.4 Index methods - save
+### 3.4 Index methods - save
 
 As implied, this method saves a model instance into elasticsearch. It looks like `index.save(modelInstance[, params])`.
 
@@ -866,7 +962,7 @@ index.save(myAnimal, {routing: 'some_id', force: true})
 
 ----
 
-### 2.5 Index methods - delete
+### 3.5 Index methods - delete
 
 Delete an instance of a model from the index. Its signature is: `index.delete(modelInstance[, params])`.
 
@@ -899,7 +995,7 @@ index.delete(myAnimal)
 
 ----
 
-### 2.6 Index methods - createOrUpdate
+### 3.6 Index methods - createOrUpdate
 
 Try to create or update the index and its type mappings. `index.createOrUpdate(settings)`.
 
@@ -927,9 +1023,73 @@ index.createOrUpdate()
 
 ----
 
-## 3 Instances
+## 4 MultiIndex
 
-### 3.1 Creating an instance
+MultiIndex is an index aggregator. It allows to perform requests on multiple indexes at once. It **does not** inherits from `esobject.Store` nor from `esobject.Index`.
+
+### 4.1 Creating a MultiIndex
+
+The constructor of MultiIndex looks like `MultiIndex([index...])`. It creates a multi index and pass to its `multiindex.add()` method all the provided arguments.
+
+```javascript
+var esobject = require('esobject');
+
+var index1 = new esobject.Index(/* args */);
+var index2 = new esobject.Index(/* args */);
+
+var multiIndex = new esobject.MultiIndex();
+multiIndex = new esobject.MultiIndex(index1, index2);
+```
+
+----
+
+### 4.2 MultiIndex methods - add
+
+The `multiIndex.add([index...])` method adds the provided indexes to the multiindex. It does not accepts `Store` instances, only `Index` instances.
+
+```javascript
+// All those are valid
+multiIndex.add(); // though this is useless
+multiIndex.add(index1);
+multiIndex.add(index1, index2);
+```
+
+----
+
+### 4.3 MultiIndex methods - remove
+
+The `multiIndex.add([index...])` method removes the provided indexes from the multiindex.
+
+```javascript
+// All those are valid
+multiIndex.remove(); // though this is useless
+multiIndex.remove(index1);
+multiIndex.remove(index1, index2);
+```
+
+----
+
+### 4.4 MultiIndex methods - getType
+
+See `store.getType()`.
+
+----
+
+### 4.5 MultiIndex methods - getTypes
+
+Aggregate results of all sub indexes types. See `store.getTypes()` for more information.
+
+----
+
+### 4.6 MultiIndex methods - search
+
+Search for the provided query on all subindexes. See `index.search()` for more information.
+
+----
+
+## 5 Instances
+
+### 5.1 Creating an instance
 
 You can create an instance by using the `new` operator on an existing model. It accepts either raw answers from the elasticseach client or a data object that may or may not contain `_id`, `_version` & `_parent` properties.
 
@@ -953,7 +1113,7 @@ var thisAnimal2 = new Animal(index, {_id: '1', _version: 0});
 
 ----
 
-### 3.2 Instance fields
+### 5.2 Instance fields
 
 On a given instance the following fields are available (they are not enumerable and will not be exported by default) :
 
@@ -966,12 +1126,12 @@ On a given instance the following fields are available (they are not enumerable 
 
 ----
 
-### 3.3 Instance methods - save
+### 5.3 Instance methods - save
 
 `instance.save([params])` is an alias to `index.save(instance[, params])`. It will throw if the instance has no internal index.
 
 ----
 
-### 3.4 Instance methods - delete
+### 5.4 Instance methods - delete
 
 `instance.delete([params])` is an alias to `index.delete(instance[, params])`. It will throw if the instance has no internal index.

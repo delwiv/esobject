@@ -25,7 +25,7 @@
   "main": "build/index.js",
   "scripts": {
     "build": "babel --preset=es2015-node4 --plugins=transform-es2015-modules-commonjs lib --out-dir build",
-    "prepublish": "npm run build && npm test",
+    "prepublish": "npm run build && npm test && markdown-toc -i README.md",
     "test": "babel-node --preset=es2015-node4 --plugins=transform-es2015-modules-commonjs test/test.js"
   },
   "dependencies": {
@@ -43,6 +43,7 @@
     "elasticsearch": ">=11.0.1",
     "eslint": "^3.7.0",
     "js-yaml": "^3.6.1",
+    "markdown-toc": "^0.13.0",
     "mocha": "^3.0.2",
     "uuid": "^2.0.3"
   },
