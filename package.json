@@ -1,6 +1,6 @@
 {
   "name": "esobject",
-  "version": "1.0.0-beta.35",
+  "version": "1.0.0-beta.36",
   "description": "ODM like library for elasticsearch",
   "author": {
     "name": "Quentin Raynaud",
@@ -24,9 +24,9 @@
   },
   "main": "build/index.js",
   "scripts": {
-    "build": "babel --preset=es2015-node4 --plugins=transform-es2015-modules-commonjs lib --out-dir build",
+    "build": "babel lib --out-dir build",
     "prepublish": "npm run build && npm test && markdown-toc -i README.md",
-    "test": "babel-node --preset=es2015-node4 --plugins=transform-es2015-modules-commonjs test/test.js"
+    "test": "babel-node test/test.js"
   },
   "dependencies": {
     "bluebird": "^3.4.6",
@@ -49,5 +49,9 @@
   },
   "engines": {
     "node": ">=4.0.0"
+  },
+  "babel": {
+    "presets": ["es2015-node4"],
+    "plugins": ["transform-es2015-modules-commonjs"]
   }
 }
