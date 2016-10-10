@@ -32,6 +32,7 @@ const Test = esobject.create({
 
   statics: {
     getSimple: getSimple,
+    getSimples: ['Test', {query: {term: {simple: true}}}],
   },
   methods: {
     getSimple: getSimple,
@@ -43,7 +44,7 @@ const Test = esobject.create({
 const index2 = new esobject.Index(client, 'esobject-test2', Test);
 const multiIndex = new esobject.MultiIndex(index, index2);
 
-//*
+/*
 Test.getSimple({index: index})
   .tap(res => console.log('static:', util.inspect(res, {colors: true, depth: null})))
   .call('getSimple')
@@ -51,7 +52,11 @@ Test.getSimple({index: index})
 ;
 //*/
 
-//*
+Test.getSimples({index: multiIndex})
+  .tap(res => console.log('static simples:', util.inspect(res, {colors: true, depth: null})))
+;
+
+/*
 multiIndex.search(Test, {aggs: {test: {value_count: {field: 'simple'}}}}) // eslint-disable-line camelcase
   .tap(res => console.log('search:', util.inspect(res, {colors: true, depth: null})))
   .call('import', [[{name: 'ELT1', sub: [{}, {}, {}]}, {user: 'toto'}], {name: 'ELT2', sub: {}}, {name: 'ELT3'}])
