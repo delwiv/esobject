@@ -9,7 +9,6 @@ const util = require('util');
 const esobject = require('../lib');
 
 const client = new elasticsearch.Client({
-  defer: Promise.defer,
   //log: 'debug',
 });
 
