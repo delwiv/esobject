@@ -51,5 +51,10 @@ properties:
   inlineSub: !require
     file: inline_sub.yaml
 
-  sub: !require
-    file: sub.js
+  sub:
+    type: !require
+      file: sub.js
+
+    $export:
+      default: !export
+        name: drop

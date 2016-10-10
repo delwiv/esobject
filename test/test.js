@@ -52,11 +52,13 @@ Test.getSimple({index: index})
 ;
 //*/
 
+/*
 Test.getSimples({index: multiIndex})
   .tap(res => console.log('static simples:', util.inspect(res, {colors: true, depth: null})))
 ;
+//*/
 
-/*
+//*
 multiIndex.search(Test, {aggs: {test: {value_count: {field: 'simple'}}}}) // eslint-disable-line camelcase
   .tap(res => console.log('search:', util.inspect(res, {colors: true, depth: null})))
   .call('import', [[{name: 'ELT1', sub: [{}, {}, {}]}, {user: 'toto'}], {name: 'ELT2', sub: {}}, {name: 'ELT3'}])
