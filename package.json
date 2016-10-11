@@ -1,6 +1,6 @@
 {
   "name": "esobject",
-  "version": "1.0.0-beta.39",
+  "version": "1.0.0-beta.40",
   "description": "ODM like library for elasticsearch",
   "author": {
     "name": "Quentin Raynaud",
