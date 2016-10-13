@@ -30,7 +30,7 @@
   },
   "dependencies": {
     "bluebird": "^3.4.6",
-    "lodash": "^4.16.2"
+    "lodash": "^4.16.4"
   },
   "peerDependencies": {
     "elasticsearch": ">=11.0.1"
@@ -41,10 +41,10 @@
     "chai-as-promised": "^6.0.0",
     "chai-properties": "^1.2.1",
     "elasticsearch": ">=11.0.1",
-    "eslint": "^3.7.0",
+    "eslint": "^3.7.1",
     "js-yaml": "^3.6.1",
     "markdown-toc": "^0.13.0",
-    "mocha": "^3.0.2",
+    "mocha": "^3.1.2",
     "uuid": "^2.0.3"
   },
   "engines": {
