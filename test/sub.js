@@ -13,12 +13,18 @@ module.exports = esobject.create({
         type: 'string',
 
         $import: {
-          default: strategies.import.default('default_import'),
+          default: strategies.import.default(strategies.import.id(), 'default_import'),
           lol: strategies.import.default('lol_import'),
         },
       },
 
-      test: 'boolean',
+      test: {
+        type: 'boolean',
+
+        $import: {
+          default: strategies.import.id(true),
+        },
+      },
     },
   },
 });

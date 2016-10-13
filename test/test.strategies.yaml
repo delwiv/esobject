@@ -55,6 +55,10 @@ properties:
     type: !require
       file: sub.js
 
+    $array:
+      dropIfNotImported: true
+      primary: value
+
     $export:
       default: !export
         name: drop

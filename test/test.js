@@ -60,9 +60,9 @@ Test.getSimples({index: multiIndex})
 //*
 multiIndex.search('Test', {aggs: {test: {value_count: {field: 'simple'}}}}) // eslint-disable-line camelcase
   .tap(res => console.log('search:', util.inspect(res, {colors: true, depth: null})))
-  .call('import', [[{name: 'ELT1', sub: [{}, {}, {}]}, {user: 'toto'}], {name: 'ELT2', sub: {}}, {name: 'ELT3'}])
+  .call('import', [[{name: 'ELT1', sub: [{}, {}, {value: 'third one', test: true}]}, {user: 'toto'}], {name: 'ELT2', sub: [{}]}, {name: 'ELT3'}])
   .tap(res => console.log('import:', util.inspect(res, {colors: true, depth: null})))
-  .call('import', [[{name: 'ELT1', sub: [{}, {}]}, {user: 'toto'}], {name: 'ELT2', sub: {}}, {name: 'ELT3'}])
+  .call('import', [[{name: 'ELT1', sub: [{value: 'third one'}, {}]}, {user: 'toto'}], {name: 'ELT2', sub: [{}]}, {name: 'ELT3'}])
   .tap(res => console.log('import2:', util.inspect(res, {colors: true, depth: null})))
   .call('export')
   .tap(res => console.log('export:', util.inspect(res, {colors: true, depth: null})))
