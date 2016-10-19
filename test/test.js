@@ -40,6 +40,8 @@ const Test = esobject.create({
   strategies: path.join(__dirname, 'test.strategies.yaml'),
 });
 
+//process.exit(0)
+
 const index2 = new esobject.Index(client, 'esobject-test2', Test);
 const multiIndex = new esobject.MultiIndex(index, index2);
 
