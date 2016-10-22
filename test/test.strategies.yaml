@@ -32,33 +32,25 @@ properties:
     type: boolean
 
     $import:
-      default: !require
-        file: biblio.js
-        prop: simple
+      default: !require {file: biblio.js, prop: simple}
 
   user:
     type: string
 
     $import:
-      default: !require
-        file: biblio.js
-        prop: user
+      default: !require {file: biblio.js, prop: user}
 
     $export:
-      default: !export
-        name: drop
+      default: !export {name: drop}
 
-  inlineSub: !require
-    file: inline_sub.yaml
+  inlineSub: !require {file: inline_sub.yaml}
 
   sub:
-    type: !require
-      file: sub.js
+    type: !require {file: sub.js}
 
     $array:
       dropIfNotImported: true
       primary: value
-
-    $export:
-      default: !export
-        name: drop
+      export:
+        after:
+          default: !require {file: biblio.js, prop: dropTest}

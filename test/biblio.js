@@ -11,3 +11,6 @@ module.exports.inlineSub = {test: _.constant('toto')};
 module.exports.checkTest = function(res) {
   console.log('check:', require('util').inspect(res, {colors: true, depth: null}));
 };
+module.exports.dropTest = function(res) {
+  return _.filter(res || [], elt => !elt.test);
+};
