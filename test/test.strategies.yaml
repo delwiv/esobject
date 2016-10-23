@@ -1,8 +1,8 @@
 dynamic: strict
 
-$check: !require
-  file: biblio.js
-  prop: checkTest
+# $check: !require
+#   file: biblio.js
+#   prop: checkTest
 
 properties:
   id:
