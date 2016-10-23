@@ -24,7 +24,7 @@
   },
   "main": "build/index.js",
   "scripts": {
-    "build": "babel lib --out-dir build",
+    "build": "rm -Rf build/ && babel lib --out-dir build",
     "prepublish": "npm run build && npm test && markdown-toc -i README.md",
     "test": "babel-node test/test.js"
   },
@@ -51,7 +51,11 @@
     "node": ">=4.0.0"
   },
   "babel": {
-    "presets": ["es2015-node4"],
-    "plugins": ["transform-es2015-modules-commonjs"]
+    "presets": [
+      "es2015-node4"
+    ],
+    "plugins": [
+      "transform-es2015-modules-commonjs"
+    ]
   }
 }
