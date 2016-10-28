@@ -1,15 +1,16 @@
 'use strict';
 
-const _ = require('lodash');
 const elasticsearch = require('elasticsearch');
+const errTree = require('err-tree');
 const path = require('path');
-const Promise = require('bluebird');
 const util = require('util');
+
+errTree.setDefaultBeautifier('complex');
 
 const esobject = require('../lib');
 
 const client = new elasticsearch.Client({
-  //log: 'debug',
+  // log: 'debug',
 });
 
 const index = new esobject.Index(client, 'esobject-test');
@@ -40,7 +41,7 @@ const Test = esobject.create({
   strategies: path.join(__dirname, 'test.strategies.yaml'),
 });
 
-//process.exit(0)
+// process.exit(0)
 
 const index2 = new esobject.Index(client, 'esobject-test2', Test);
 const multiIndex = new esobject.MultiIndex(index, index2);
@@ -101,8 +102,15 @@ index.createOrUpdate({number_of_shards: 2, number_of_replicas: 1})
 ;
 //*/
 
-//*
+/*
 index.createTemplate('esobject-test', 'esobject-test*', {number_of_shards: 2, number_of_replicas: 1})
   .tap(res => console.log('mapping:', util.inspect(res, {colors: true, depth: null})))
 ;
 //*/
+
+/*
+index.get('Test', 'lol')
+  .catch(err => console.log('test.js:112', err))
+;
+//*/
+//
