@@ -114,3 +114,7 @@ index.get('Test', 'lol')
 ;
 //*/
 //
+
+/*
+index.reindex(new esobject.Index(client, 'esobject-test3'));
+//*/
