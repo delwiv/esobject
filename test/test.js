@@ -4,6 +4,7 @@ const elasticsearch = require('elasticsearch');
 const errTree = require('err-tree');
 const path = require('path');
 const util = require('util');
+const yaml = require('js-yaml');
 
 errTree.setDefaultBeautifier('complex');
 
@@ -30,9 +31,15 @@ const Test = esobject.create({
   name: 'Test',
   stores: index,
 
+  queryLoader: {
+    yaml: {
+      types: [new yaml.Type('!on', {kind: 'scalar', construct: () => true})],
+    },
+  },
+
   statics: {
     getSimple: getSimple,
-    getSimples: ['Test', {query: {term: {simple: true}}}],
+    getSimples: ['Test', path.join(__dirname, 'find_simple.yaml')],
   },
   methods: {
     getSimple: getSimple,
@@ -54,13 +61,13 @@ Test.getSimple({index: index})
 ;
 //*/
 
-/*
+//*
 Test.getSimples({index: multiIndex})
   .tap(res => console.log('static simples:', util.inspect(res, {colors: true, depth: null})))
 ;
 //*/
 
-//*
+/*
 multiIndex.search('Test', {aggs: {test: {value_count: {field: 'simple'}}}}) // eslint-disable-line camelcase
   .tap(res => console.log('search:', util.inspect(res, {colors: true, depth: null})))
   .call('import', [[{name: 'ELT1', sub: [{}, {}, {value: 'third one', test: true}]}, {user: 'toto'}], {name: 'ELT2', sub: [{}]}, {name: 'ELT3'}])
