@@ -1,3 +1,6 @@
 query:
-  term:
-    simple: !on
+  bool:
+    must: !filter
+    - term:
+        simple: !on
+    - !options notFoundNever$Ever$
