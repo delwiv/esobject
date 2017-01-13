@@ -45,6 +45,15 @@ properties:
 
   inlineSub: !require {file: inline_sub.yaml}
 
+  emptySub:
+    type: object
+    properties:
+      test:
+        type: string
+
+        $import:
+          default: !require {file: biblio.js, prop: returnUndefined}
+
   sub:
     type: !require {file: sub.js}
 

@@ -53,6 +53,11 @@ const Test = esobject.create({
 const index2 = new esobject.Index(client, 'esobject-test2', Test);
 const multiIndex = new esobject.MultiIndex(index, index2);
 
+var test = new Test();
+test.import({})
+  .tap(test => console.log(test))
+;
+
 /*
 Test.getSimple({index: index})
   .tap(res => console.log('static:', util.inspect(res, {colors: true, depth: null})))
@@ -61,7 +66,7 @@ Test.getSimple({index: index})
 ;
 //*/
 
-//*
+/*
 Test.getSimples({index: multiIndex})
   .tap(res => console.log('static simples:', util.inspect(res, {colors: true, depth: null})))
 ;

@@ -14,3 +14,5 @@ module.exports.checkTest = function(res) {
 module.exports.dropTest = function(res) {
   return _.filter(res || [], elt => !elt.test);
 };
+module.exports.returnUndefined = function() {
+};
